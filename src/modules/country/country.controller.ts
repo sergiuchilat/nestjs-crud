@@ -1,5 +1,5 @@
-import { Controller, Get, HttpStatus, Res } from '@nestjs/common';
-import { Response } from 'express';
+import { Controller, Get, HttpStatus, Req, Res } from '@nestjs/common';
+import { Request, Response } from 'express';
 import { CountryService } from './country.service';
 
 @Controller('/countries')
@@ -9,5 +9,21 @@ export class CountryController {
   @Get()
   async getAll(@Res() response: Response) {
     response.status(HttpStatus.OK).json(await this.countryService.getAll());
+  }
+
+  @Get(':id')
+  async getOneById(@Req() request: Request, @Res() response: Response) {
+    try {
+      const country = await this.countryService.getOneById(
+        Number(request.params.id),
+      );
+      if (country) {
+        response.status(HttpStatus.OK).send(country);
+      } else {
+        response.status(HttpStatus.NOT_FOUND).send();
+      }
+    } catch (e) {
+      response.status(HttpStatus.INTERNAL_SERVER_ERROR).send(e);
+    }
   }
 }

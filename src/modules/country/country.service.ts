@@ -13,4 +13,12 @@ export class CountryService {
   getAll(): Promise<Country[]> {
     return this.countryRepository.find();
   }
+
+  getOneById(id: number): Promise<Country> | undefined {
+    return this.countryRepository.findOne({
+      where: {
+        id,
+      },
+    });
+  }
 }

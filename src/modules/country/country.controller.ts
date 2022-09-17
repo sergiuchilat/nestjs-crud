@@ -1,18 +1,26 @@
 import {
+  Body,
   Controller,
   Delete,
   Get,
   HttpStatus,
+  Param,
   Patch,
   Post,
-  Req,
   Res,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { CountryService } from './country.service';
 import { RegionService } from '../region/region.service';
 import { LocationService } from '../location/location.service';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { CountryCreateDto } from './dto/country.create.dto';
+import { CountryItemDto } from './dto/country.item.dto';
+import { LocationItemDto } from '../location/dto/location.item.dto';
+import { RegionItemDto } from '../region/dto/region.item.dto';
+import { ApiImplicitParam } from '@nestjs/swagger/dist/decorators/api-implicit-param.decorator';
 
+@ApiTags('Countries')
 @Controller('/countries')
 export class CountryController {
   constructor(
@@ -22,65 +30,92 @@ export class CountryController {
   ) {}
 
   @Get()
+  @ApiOperation({ summary: 'GET List of countries' })
+  @ApiOkResponse({
+    description: 'List of countries',
+    type: CountryItemDto,
+    isArray: true,
+  })
   async getAll(@Res() response: Response) {
-    response.status(HttpStatus.OK).json(await this.countryService.getAll());
-  }
-
-  @Get(':id')
-  async getOneById(@Req() request: Request, @Res() response: Response) {
     try {
-      const country = await this.countryService.getOneById(
-        Number(request.params.id),
-      );
-      if (country) {
-        response.status(HttpStatus.OK).send(country);
-      } else {
-        response.status(HttpStatus.NOT_FOUND).send();
-      }
+      response.status(HttpStatus.OK).json(await this.countryService.getAll());
     } catch (e) {
       response.status(HttpStatus.INTERNAL_SERVER_ERROR).send(e);
     }
   }
 
-  @Post()
-  async create(@Req() request: Request, @Res() response: Response) {
+  @Get(':id')
+  @ApiOperation({ summary: 'GET One country by Id' })
+  @ApiImplicitParam({ name: 'id', description: 'Country id', type: 'number' })
+  @ApiOkResponse({
+    description: 'Country item',
+    type: CountryItemDto,
+    isArray: false,
+  })
+  async getOneById(@Param('id') id: number, @Res() response: Response) {
     try {
-      const country = await this.countryService.create(request.body);
-      if (country) {
-        response.status(HttpStatus.OK).send(country);
-      } else {
-        response.status(HttpStatus.NOT_FOUND).send();
-      }
+      response
+        .status(HttpStatus.OK)
+        .send(await this.countryService.getOneById(id));
+    } catch (e) {
+      response.status(HttpStatus.NOT_FOUND).send(e);
+    }
+  }
+
+  @Post()
+  @ApiOperation({ summary: 'Create a new country' })
+  @ApiOkResponse({
+    description: 'Added country',
+    type: CountryItemDto,
+    isArray: true,
+  })
+  async create(
+    @Body() createCountryDto: CountryCreateDto,
+    @Res() response: Response,
+  ) {
+    try {
+      response
+        .status(HttpStatus.OK)
+        .send(await this.countryService.create(createCountryDto));
     } catch (e) {
       response.status(HttpStatus.INTERNAL_SERVER_ERROR).send(e);
     }
   }
 
   @Patch(':id')
-  async update(@Req() request: Request, @Res() response: Response) {
+  @ApiOperation({ summary: 'Update a country by Id' })
+  @ApiImplicitParam({ name: 'id', description: 'Country id', type: 'number' })
+  @ApiOkResponse({
+    description: 'Updated country',
+    type: CountryItemDto,
+    isArray: true,
+  })
+  async update(
+    @Body() updateCountryDto: CountryCreateDto,
+    @Param('id') id: number,
+    @Res() response: Response,
+  ) {
     try {
-      const country = await this.countryService.update(
-        Number(request.params.id),
-        request.body,
-      );
-      if (country) {
-        response.status(HttpStatus.OK).send(country);
-      } else {
-        response.status(HttpStatus.NOT_FOUND).send();
-      }
+      response
+        .status(HttpStatus.OK)
+        .send(await this.countryService.update(id, updateCountryDto));
     } catch (e) {
       response.status(HttpStatus.INTERNAL_SERVER_ERROR).send(e);
     }
   }
 
   @Delete(':id')
-  async delete(@Req() request: Request, @Res() response: Response) {
+  @ApiOperation({ summary: 'Delete a country by Id' })
+  @ApiImplicitParam({ name: 'id', description: 'Country id', type: 'number' })
+  @ApiOkResponse({
+    description: 'Empty response',
+    type: null,
+  })
+  async delete(@Param('id') id: number, @Res() response: Response) {
     try {
-      const country = await this.countryService.getOneById(
-        Number(request.params.id),
-      );
+      const country = await this.countryService.getOneById(id);
       if (country) {
-        await this.countryService.delete(Number(request.params.id));
+        await this.countryService.delete(id);
         response.status(HttpStatus.OK).send({});
       } else {
         response.status(HttpStatus.NOT_FOUND).send();
@@ -91,11 +126,16 @@ export class CountryController {
   }
 
   @Get(':id/regions')
-  async regions(@Req() request: Request, @Res() response: Response) {
+  @ApiOperation({ summary: 'Get a country regions' })
+  @ApiImplicitParam({ name: 'id', description: 'Country id', type: 'number' })
+  @ApiOkResponse({
+    description: 'List of regions',
+    type: RegionItemDto,
+    isArray: true,
+  })
+  async regions(@Param('id') id: number, Request, @Res() response: Response) {
     try {
-      const regions = await this.regionService.getForCountry(
-        Number(request.params.id),
-      );
+      const regions = await this.regionService.getForCountry(id);
       if (regions) {
         response.status(HttpStatus.OK).send(regions);
       } else {
@@ -107,18 +147,22 @@ export class CountryController {
   }
 
   @Get(':id/locations')
-  async locations(@Req() request: Request, @Res() response: Response) {
+  @ApiOperation({ summary: 'Get a country locations' })
+  @ApiImplicitParam({ name: 'id', description: 'Country id', type: 'number' })
+  @ApiOkResponse({
+    description: 'List of locations',
+    type: LocationItemDto,
+    isArray: true,
+  })
+  async locations(@Param('id') id: number, @Res() response: Response) {
     try {
-      const locations = await this.locationService.getForCountry(
-        Number(request.params.id),
-      );
+      const locations = await this.locationService.getForCountry(id);
       if (locations) {
         response.status(HttpStatus.OK).send(locations);
       } else {
         response.status(HttpStatus.NOT_FOUND).send();
       }
     } catch (e) {
-      console.log(e);
       response.status(HttpStatus.INTERNAL_SERVER_ERROR).send(e);
     }
   }

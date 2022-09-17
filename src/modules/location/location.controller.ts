@@ -10,7 +10,9 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { LocationService } from './location.service';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Locations')
 @Controller('/locations')
 export class LocationController {
   constructor(private readonly locationService: LocationService) {}

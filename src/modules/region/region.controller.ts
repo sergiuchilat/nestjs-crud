@@ -11,7 +11,9 @@ import {
 import { Request, Response } from 'express';
 import { RegionService } from './region.service';
 import { LocationService } from '../location/location.service';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Regions')
 @Controller('/regions')
 export class RegionController {
   constructor(

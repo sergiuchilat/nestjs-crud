@@ -23,6 +23,15 @@ export class CountryService {
   }
 
   async create(country: Country): Promise<Country> | undefined {
-    return this.countryRepository.create(country);
+    return this.countryRepository.save(country);
+  }
+
+  async update(id: number, newValue: Country): Promise<Country> | undefined {
+    await this.countryRepository.update(id, newValue);
+    return this.getOneById(id);
+  }
+
+  async delete(id: number) {
+    return await this.countryRepository.delete(id);
   }
 }

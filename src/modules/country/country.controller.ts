@@ -5,6 +5,7 @@ import {
   Get,
   HttpStatus,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Res,
@@ -52,7 +53,10 @@ export class CountryController {
     type: CountryItemDto,
     isArray: false,
   })
-  async getOneById(@Param('id') id: number, @Res() response: Response) {
+  async getOneById(
+    @Param('id', ParseIntPipe) id: number,
+    @Res() response: Response,
+  ) {
     try {
       response
         .status(HttpStatus.OK)
@@ -92,7 +96,7 @@ export class CountryController {
   })
   async update(
     @Body() updateCountryDto: CountryCreateDto,
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Res() response: Response,
   ) {
     try {
@@ -111,7 +115,10 @@ export class CountryController {
     description: 'Empty response',
     type: null,
   })
-  async delete(@Param('id') id: number, @Res() response: Response) {
+  async delete(
+    @Param('id', ParseIntPipe) id: number,
+    @Res() response: Response,
+  ) {
     try {
       const country = await this.countryService.getOneById(id);
       if (country) {
@@ -133,7 +140,11 @@ export class CountryController {
     type: RegionItemDto,
     isArray: true,
   })
-  async regions(@Param('id') id: number, Request, @Res() response: Response) {
+  async regions(
+    @Param('id', ParseIntPipe) id: number,
+    Request,
+    @Res() response: Response,
+  ) {
     try {
       const regions = await this.regionService.getForCountry(id);
       if (regions) {
@@ -154,7 +165,10 @@ export class CountryController {
     type: LocationItemDto,
     isArray: true,
   })
-  async locations(@Param('id') id: number, @Res() response: Response) {
+  async locations(
+    @Param('id', ParseIntPipe) id: number,
+    @Res() response: Response,
+  ) {
     try {
       const locations = await this.locationService.getForCountry(id);
       if (locations) {

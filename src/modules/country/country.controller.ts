@@ -131,6 +131,26 @@ export class CountryController {
       response.status(HttpStatus.INTERNAL_SERVER_ERROR).send(e);
     }
   }
+  @Get(':id/with-regions')
+  @ApiOperation({ summary: 'GET One country by Id with regions' })
+  @ApiImplicitParam({ name: 'id', description: 'Country id', type: 'number' })
+  @ApiOkResponse({
+    description: 'Country item with regions',
+    type: CountryItemDto,
+    isArray: false,
+  })
+  async getOneByIdWithRegions(
+    @Param('id', ParseIntPipe) id: number,
+    @Res() response: Response,
+  ) {
+    try {
+      response
+        .status(HttpStatus.OK)
+        .send(await this.countryService.getOneByIdWithRegions(id));
+    } catch (e) {
+      response.status(HttpStatus.NOT_FOUND).send(e);
+    }
+  }
 
   @Get(':id/regions')
   @ApiOperation({ summary: 'Get a country regions' })

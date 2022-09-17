@@ -1,5 +1,4 @@
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Country } from '../../modules/country/country.entity';
 
 export default TypeOrmModule.forRoot({
   type: 'mysql',
@@ -8,6 +7,6 @@ export default TypeOrmModule.forRoot({
   username: 'express_test',
   password: 'password',
   database: 'express_test',
-  entities: [Country],
+  autoLoadEntities: true,
   synchronize: true,
 });

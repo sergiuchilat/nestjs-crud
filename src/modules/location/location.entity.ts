@@ -4,14 +4,14 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToMany,
+  ManyToOne,
 } from 'typeorm';
 import { Region } from '../region/region.entity';
 
 @Entity({
-  name: 'countries',
+  name: 'locations',
 })
-export class Country {
+export class Location {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -29,6 +29,12 @@ export class Country {
   })
   code: string;
 
+  @Column({
+    type: 'int',
+    nullable: false,
+  })
+  regionId: number;
+
   @CreateDateColumn({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP(6)',
@@ -42,6 +48,6 @@ export class Country {
   })
   public updatedAt: Date;
 
-  @OneToMany(() => Region, (region) => region.countryId)
-  regions: Region[];
+  @ManyToOne(() => Region, (region) => region.locations)
+  region: Region;
 }

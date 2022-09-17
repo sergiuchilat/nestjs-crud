@@ -9,31 +9,33 @@ import {
   Res,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { CountryService } from './country.service';
-import { RegionService } from '../region/region.service';
+import { RegionService } from './region.service';
 import { LocationService } from '../location/location.service';
 
-@Controller('/countries')
-export class CountryController {
+@Controller('/regions')
+export class RegionController {
   constructor(
-    private readonly countryService: CountryService,
     private readonly regionService: RegionService,
     private readonly locationService: LocationService,
   ) {}
 
   @Get()
   async getAll(@Res() response: Response) {
-    response.status(HttpStatus.OK).json(await this.countryService.getAll());
+    try {
+      response.status(HttpStatus.OK).json(await this.regionService.getAll());
+    } catch (e) {
+      response.status(HttpStatus.INTERNAL_SERVER_ERROR).send(e);
+    }
   }
 
   @Get(':id')
   async getOneById(@Req() request: Request, @Res() response: Response) {
     try {
-      const country = await this.countryService.getOneById(
+      const region = await this.regionService.getOneById(
         Number(request.params.id),
       );
-      if (country) {
-        response.status(HttpStatus.OK).send(country);
+      if (region) {
+        response.status(HttpStatus.OK).send(region);
       } else {
         response.status(HttpStatus.NOT_FOUND).send();
       }
@@ -45,9 +47,9 @@ export class CountryController {
   @Post()
   async create(@Req() request: Request, @Res() response: Response) {
     try {
-      const country = await this.countryService.create(request.body);
-      if (country) {
-        response.status(HttpStatus.OK).send(country);
+      const region = await this.regionService.create(request.body);
+      if (region) {
+        response.status(HttpStatus.OK).send(region);
       } else {
         response.status(HttpStatus.NOT_FOUND).send();
       }
@@ -59,12 +61,12 @@ export class CountryController {
   @Patch(':id')
   async update(@Req() request: Request, @Res() response: Response) {
     try {
-      const country = await this.countryService.update(
+      const region = await this.regionService.update(
         Number(request.params.id),
         request.body,
       );
-      if (country) {
-        response.status(HttpStatus.OK).send(country);
+      if (region) {
+        response.status(HttpStatus.OK).send(region);
       } else {
         response.status(HttpStatus.NOT_FOUND).send();
       }
@@ -76,28 +78,12 @@ export class CountryController {
   @Delete(':id')
   async delete(@Req() request: Request, @Res() response: Response) {
     try {
-      const country = await this.countryService.getOneById(
+      const region = await this.regionService.getOneById(
         Number(request.params.id),
       );
-      if (country) {
-        await this.countryService.delete(Number(request.params.id));
+      if (region) {
+        await this.regionService.delete(Number(request.params.id));
         response.status(HttpStatus.OK).send({});
-      } else {
-        response.status(HttpStatus.NOT_FOUND).send();
-      }
-    } catch (e) {
-      response.status(HttpStatus.INTERNAL_SERVER_ERROR).send(e);
-    }
-  }
-
-  @Get(':id/regions')
-  async regions(@Req() request: Request, @Res() response: Response) {
-    try {
-      const regions = await this.regionService.getForCountry(
-        Number(request.params.id),
-      );
-      if (regions) {
-        response.status(HttpStatus.OK).send(regions);
       } else {
         response.status(HttpStatus.NOT_FOUND).send();
       }
@@ -109,7 +95,7 @@ export class CountryController {
   @Get(':id/locations')
   async locations(@Req() request: Request, @Res() response: Response) {
     try {
-      const locations = await this.locationService.getForCountry(
+      const locations = await this.locationService.getForRegion(
         Number(request.params.id),
       );
       if (locations) {
@@ -118,7 +104,6 @@ export class CountryController {
         response.status(HttpStatus.NOT_FOUND).send();
       }
     } catch (e) {
-      console.log(e);
       response.status(HttpStatus.INTERNAL_SERVER_ERROR).send(e);
     }
   }

@@ -131,6 +131,7 @@ export class CountryController {
       response.status(HttpStatus.INTERNAL_SERVER_ERROR).send(e);
     }
   }
+
   @Get(':id/with-regions')
   @ApiOperation({ summary: 'GET One country by Id with regions' })
   @ApiImplicitParam({ name: 'id', description: 'Country id', type: 'number' })

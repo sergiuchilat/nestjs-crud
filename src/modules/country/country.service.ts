@@ -10,15 +10,19 @@ export class CountryService {
     private countryRepository: Repository<Country>,
   ) {}
 
-  getAll(): Promise<Country[]> {
-    return this.countryRepository.find();
+  async getAll(): Promise<Country[]> {
+    return await this.countryRepository.find();
   }
 
-  getOneById(id: number): Promise<Country> | undefined {
-    return this.countryRepository.findOne({
+  async getOneById(id: number): Promise<Country> | undefined {
+    return await this.countryRepository.findOne({
       where: {
         id,
       },
     });
+  }
+
+  async create(country: Country): Promise<Country> | undefined {
+    return this.countryRepository.create(country);
   }
 }

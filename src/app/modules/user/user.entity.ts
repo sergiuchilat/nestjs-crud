@@ -6,7 +6,6 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { compare } from 'bcrypt';
 
 export enum RoleEnumType {
   USER = 'user',
@@ -57,13 +56,6 @@ export class User {
     onUpdate: 'CURRENT_TIMESTAMP(6)',
   })
   public updatedAt: Date;
-
-  static async comparePasswords(
-    candidatePassword: string,
-    hashedPassword: string,
-  ) {
-    return await compare(candidatePassword, hashedPassword);
-  }
 
   toJSON() {
     return { ...this, password: undefined, verified: undefined };

@@ -20,7 +20,7 @@ import { CountryCreateDto } from './dto/country.create.dto';
 import { CountryItemDto } from './dto/country.item.dto';
 import { LocationItemDto } from '../location/dto/location.item.dto';
 import { RegionItemDto } from '../region/dto/region.item.dto';
-import { ApiImplicitParam } from '@nestjs/swagger/dist/decorators/api-implicit-param.decorator';
+import { ApiParam } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 
 @ApiTags('Countries')
@@ -49,7 +49,7 @@ export class CountryController {
 
   @Get(':id')
   @ApiOperation({ summary: 'GET One country by Id' })
-  @ApiImplicitParam({ name: 'id', description: 'Country id', type: 'number' })
+  @ApiParam({ name: 'id', description: 'Country id', type: 'number' })
   @ApiOkResponse({
     description: 'Country item',
     type: CountryItemDto,
@@ -91,7 +91,7 @@ export class CountryController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update a country by Id' })
-  @ApiImplicitParam({ name: 'id', description: 'Country id', type: 'number' })
+  @ApiParam({ name: 'id', description: 'Country id', type: 'number' })
   @ApiOkResponse({
     description: 'Updated country',
     type: CountryItemDto,
@@ -114,7 +114,7 @@ export class CountryController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a country by Id' })
-  @ApiImplicitParam({ name: 'id', description: 'Country id', type: 'number' })
+  @ApiParam({ name: 'id', description: 'Country id', type: 'number' })
   @ApiOkResponse({
     description: 'Empty response',
     type: null,
@@ -139,7 +139,7 @@ export class CountryController {
 
   @Get(':id/with-regions')
   @ApiOperation({ summary: 'GET One country by Id with regions' })
-  @ApiImplicitParam({ name: 'id', description: 'Country id', type: 'number' })
+  @ApiParam({ name: 'id', description: 'Country id', type: 'number' })
   @ApiOkResponse({
     description: 'Country item with regions',
     type: CountryItemDto,
@@ -160,7 +160,7 @@ export class CountryController {
 
   @Get(':id/regions')
   @ApiOperation({ summary: 'Get a country regions' })
-  @ApiImplicitParam({ name: 'id', description: 'Country id', type: 'number' })
+  @ApiParam({ name: 'id', description: 'Country id', type: 'number' })
   @ApiOkResponse({
     description: 'List of regions',
     type: RegionItemDto,
@@ -185,7 +185,7 @@ export class CountryController {
 
   @Get(':id/locations')
   @ApiOperation({ summary: 'Get a country locations' })
-  @ApiImplicitParam({ name: 'id', description: 'Country id', type: 'number' })
+  @ApiParam({ name: 'id', description: 'Country id', type: 'number' })
   @ApiOkResponse({
     description: 'List of locations',
     type: LocationItemDto,

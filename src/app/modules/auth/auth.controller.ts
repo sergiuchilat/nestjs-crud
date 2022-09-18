@@ -1,8 +1,8 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { ApiImplicitParam } from '@nestjs/swagger/dist/decorators/api-implicit-param.decorator';
 import { UserLoginDto } from './dto/user.login.dto';
+import { UserLoginResponseDto } from './dto/user.login.response.dto';
 
 @ApiTags('Authentication')
 @Controller('/auth')
@@ -11,10 +11,9 @@ export class AuthController {
 
   @Post('login')
   @ApiOperation({ summary: 'User login' })
-  @ApiImplicitParam({ name: 'id', description: 'Country id', type: 'number' })
   @ApiOkResponse({
-    description: 'Empty response',
-    type: null,
+    description: 'Bearer token',
+    type: UserLoginResponseDto,
   })
   async login(@Body() userLoginDto: UserLoginDto) {
     return this.authService.login(userLoginDto);

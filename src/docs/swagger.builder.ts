@@ -6,6 +6,7 @@ const buildApiDocs = (app, ConfigEnv) => {
     .setDescription(ConfigEnv.DOCS_DESCRIPTION)
     .setVersion(ConfigEnv.DOCS_VERSION)
     .addServer(ConfigEnv.API_SERVER_URL)
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup(ConfigEnv.DOCS_PATH, app, document);

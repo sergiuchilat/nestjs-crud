@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Length } from 'class-validator';
 
-export class UserLoginDto {
+export class UserRegisterDto {
   @ApiProperty({ example: 'mail@mail.com', description: 'Username' })
-  @Length(10, 50, {
+  @Length(6, 50, {
     message: 'Email must contain [$constraint1, $constraint2] characters',
   })
   email: string;

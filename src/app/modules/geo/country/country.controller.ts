@@ -21,7 +21,7 @@ import { CountryItemDto } from './dto/country.item.dto';
 import { LocationItemDto } from '../location/dto/location.item.dto';
 import { RegionItemDto } from '../region/dto/region.item.dto';
 import { ApiParam } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../../../middleware/guards/jwt-auth.guard';
 
 @ApiTags('Countries')
 @Controller('/countries')

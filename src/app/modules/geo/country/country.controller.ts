@@ -9,6 +9,7 @@ import {
   Patch,
   Post,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { CountryService } from './country.service';
@@ -20,6 +21,7 @@ import { CountryItemDto } from './dto/country.item.dto';
 import { LocationItemDto } from '../location/dto/location.item.dto';
 import { RegionItemDto } from '../region/dto/region.item.dto';
 import { ApiImplicitParam } from '@nestjs/swagger/dist/decorators/api-implicit-param.decorator';
+import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 
 @ApiTags('Countries')
 @Controller('/countries')
@@ -73,6 +75,7 @@ export class CountryController {
     type: CountryItemDto,
     isArray: true,
   })
+  @UseGuards(JwtAuthGuard)
   async create(
     @Body() createCountryDto: CountryCreateDto,
     @Res() response: Response,
@@ -94,6 +97,7 @@ export class CountryController {
     type: CountryItemDto,
     isArray: true,
   })
+  @UseGuards(JwtAuthGuard)
   async update(
     @Body() updateCountryDto: CountryCreateDto,
     @Param('id', ParseIntPipe) id: number,
@@ -115,6 +119,7 @@ export class CountryController {
     description: 'Empty response',
     type: null,
   })
+  @UseGuards(JwtAuthGuard)
   async delete(
     @Param('id', ParseIntPipe) id: number,
     @Res() response: Response,

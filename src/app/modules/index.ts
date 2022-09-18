@@ -1,5 +1,6 @@
-import { CountryModule } from './country/country.module';
-import { RegionModule } from './region/region.module';
-import { LocationModule } from './location/location.module';
+import { CountryModule } from './geo/country/country.module';
+import { RegionModule } from './geo/region/region.module';
+import { LocationModule } from './geo/location/location.module';
+import { AuthModule } from './auth/auth.module';
 
-export default [CountryModule, RegionModule, LocationModule];
+export default [AuthModule, CountryModule, RegionModule, LocationModule];

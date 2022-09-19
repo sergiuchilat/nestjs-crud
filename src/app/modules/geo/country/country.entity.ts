@@ -59,12 +59,12 @@ export class Country {
 
   @BeforeInsert()
   public beforeInsert() {
-    this.createdBy = 1;
-    this.updatedBy = 1;
+    // this.createdBy = 1;
+    // this.updatedBy = 1;
   }
 
   @BeforeUpdate()
   public beforeUpdate() {
-    this.updatedBy = 2;
+    // this.updatedBy = 2;
   }
 }

@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Country } from './country.entity';
@@ -43,15 +47,32 @@ export class CountryService {
     }
   }
 
-  async create(country: CountryCreateDto): Promise<CountryItemDto> | undefined {
-    return this.countryRepository.save(plainToInstance(Country, country));
+  async create(
+    country: CountryCreateDto,
+    user: any,
+  ): Promise<CountryItemDto> | undefined {
+    const countryEntity = plainToInstance(Country, country);
+
+    const existingCountry = await this.countryRepository.findOne({
+      where: [{ name: countryEntity.name }, { code: countryEntity.code }],
+    });
+
+    if (existingCountry) {
+      throw new ConflictException();
+    }
+    countryEntity.createdBy = user.id;
+    countryEntity.updatedBy = user.id;
+    return await this.countryRepository.save(countryEntity);
   }
 
   async update(
     id: number,
     newValue: CountryCreateDto,
+    user: any,
   ): Promise<CountryItemDto> | undefined {
-    await this.countryRepository.update(id, plainToInstance(Country, newValue));
+    const countryEntity = plainToInstance(Country, newValue);
+    countryEntity.updatedBy = user.id;
+    await this.countryRepository.update(id, countryEntity);
     return this.getOneById(id);
   }
 

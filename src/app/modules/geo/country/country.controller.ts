@@ -10,6 +10,7 @@ import {
   Post,
   Req,
   Res,
+  UseFilters,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { CountryService } from './country.service';
@@ -28,9 +29,11 @@ import { RegionItemDto } from '../region/dto/region.item.dto';
 import { Public } from '../../../decorators/public.decorator';
 import { RolesGuard } from '../../user/roles/roles.decorator';
 import { UserRole } from '../../user/roles/role.enum';
+import { AllExceptionsFilter } from '../../../exceptions/all-exceptions';
 
 @ApiTags('Countries')
 @Controller('/countries')
+@UseFilters(AllExceptionsFilter)
 export class CountryController {
   constructor(
     private readonly countryService: CountryService,
@@ -82,7 +85,7 @@ export class CountryController {
   ) {
     response
       .status(HttpStatus.OK)
-      .send(await this.countryService.create(createCountryDto));
+      .send(await this.countryService.create(createCountryDto, request.user));
   }
 
   @Patch(':id')
@@ -97,11 +100,14 @@ export class CountryController {
   async update(
     @Body() updateCountryDto: CountryCreateDto,
     @Param('id', ParseIntPipe) id: number,
+    @Req() request: Request,
     @Res() response: Response,
   ) {
     response
       .status(HttpStatus.OK)
-      .send(await this.countryService.update(id, updateCountryDto));
+      .send(
+        await this.countryService.update(id, updateCountryDto, request.user),
+      );
   }
 
   @Delete(':id')
@@ -121,7 +127,7 @@ export class CountryController {
 
   @Get(':id/with-regions')
   @Public()
-  @ApiOperation({ summary: 'GET One country by Id with regions' })
+  @ApiOperation({ summary: 'Get One country by Id with regions' })
   @ApiParam({ name: 'id', description: 'Country id', type: 'number' })
   @ApiOkResponse({
     description: 'Country item with regions',

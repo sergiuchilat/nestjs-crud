@@ -40,23 +40,19 @@ export class CountryController {
 
   @Get()
   @Public()
-  @ApiOperation({ summary: 'GET List of countries' })
+  @ApiOperation({ summary: 'Get List of countries' })
   @ApiOkResponse({
     description: 'List of countries',
     type: CountryItemDto,
     isArray: true,
   })
   async getAll(@Res() response: Response) {
-    try {
-      response.status(HttpStatus.OK).json(await this.countryService.getAll());
-    } catch (e) {
-      response.status(HttpStatus.INTERNAL_SERVER_ERROR).send(e);
-    }
+    response.status(HttpStatus.OK).json(await this.countryService.getAll());
   }
 
   @Get(':id')
-  @RolesGuard(UserRole.ADMIN)
-  @ApiOperation({ summary: 'GET One country by Id' })
+  @Public()
+  @ApiOperation({ summary: 'Get One country by Id' })
   @ApiParam({ name: 'id', description: 'Country id', type: 'number' })
   @ApiOkResponse({
     description: 'Country item',
@@ -67,13 +63,9 @@ export class CountryController {
     @Param('id', ParseIntPipe) id: number,
     @Res() response: Response,
   ) {
-    try {
-      response
-        .status(HttpStatus.OK)
-        .send(await this.countryService.getOneById(id));
-    } catch (e) {
-      response.status(HttpStatus.NOT_FOUND).send(e);
-    }
+    response
+      .status(HttpStatus.OK)
+      .send(await this.countryService.getOneById(id));
   }
 
   @Post()
@@ -88,17 +80,13 @@ export class CountryController {
     @Req() request: Request,
     @Res() response: Response,
   ) {
-    console.log(request);
-    try {
-      response
-        .status(HttpStatus.OK)
-        .send(await this.countryService.create(createCountryDto));
-    } catch (e) {
-      response.status(HttpStatus.INTERNAL_SERVER_ERROR).send(e);
-    }
+    response
+      .status(HttpStatus.OK)
+      .send(await this.countryService.create(createCountryDto));
   }
 
   @Patch(':id')
+  @RolesGuard(UserRole.ADMIN)
   @ApiOperation({ summary: 'Update a country by Id' })
   @ApiParam({ name: 'id', description: 'Country id', type: 'number' })
   @ApiOkResponse({
@@ -111,16 +99,13 @@ export class CountryController {
     @Param('id', ParseIntPipe) id: number,
     @Res() response: Response,
   ) {
-    try {
-      response
-        .status(HttpStatus.OK)
-        .send(await this.countryService.update(id, updateCountryDto));
-    } catch (e) {
-      response.status(HttpStatus.INTERNAL_SERVER_ERROR).send(e);
-    }
+    response
+      .status(HttpStatus.OK)
+      .send(await this.countryService.update(id, updateCountryDto));
   }
 
   @Delete(':id')
+  @RolesGuard(UserRole.ADMIN)
   @ApiOperation({ summary: 'Delete a country by Id' })
   @ApiParam({ name: 'id', description: 'Country id', type: 'number' })
   @ApiOkResponse({
@@ -131,20 +116,11 @@ export class CountryController {
     @Param('id', ParseIntPipe) id: number,
     @Res() response: Response,
   ) {
-    try {
-      const country = await this.countryService.getOneById(id);
-      if (country) {
-        await this.countryService.delete(id);
-        response.status(HttpStatus.OK).send({});
-      } else {
-        response.status(HttpStatus.NOT_FOUND).send();
-      }
-    } catch (e) {
-      response.status(HttpStatus.INTERNAL_SERVER_ERROR).send(e);
-    }
+    response.status(HttpStatus.OK).send(await this.countryService.delete(id));
   }
 
   @Get(':id/with-regions')
+  @Public()
   @ApiOperation({ summary: 'GET One country by Id with regions' })
   @ApiParam({ name: 'id', description: 'Country id', type: 'number' })
   @ApiOkResponse({
@@ -156,16 +132,13 @@ export class CountryController {
     @Param('id', ParseIntPipe) id: number,
     @Res() response: Response,
   ) {
-    try {
-      response
-        .status(HttpStatus.OK)
-        .send(await this.countryService.getOneByIdWithRegions(id));
-    } catch (e) {
-      response.status(HttpStatus.NOT_FOUND).send(e);
-    }
+    response
+      .status(HttpStatus.OK)
+      .send(await this.countryService.getOneByIdWithRegions(id));
   }
 
   @Get(':id/regions')
+  @Public()
   @ApiOperation({ summary: 'Get a country regions' })
   @ApiParam({ name: 'id', description: 'Country id', type: 'number' })
   @ApiOkResponse({
@@ -178,19 +151,13 @@ export class CountryController {
     Request,
     @Res() response: Response,
   ) {
-    try {
-      const regions = await this.regionService.getForCountry(id);
-      if (regions) {
-        response.status(HttpStatus.OK).send(regions);
-      } else {
-        response.status(HttpStatus.NOT_FOUND).send();
-      }
-    } catch (e) {
-      response.status(HttpStatus.INTERNAL_SERVER_ERROR).send(e);
-    }
+    response
+      .status(HttpStatus.OK)
+      .send(await this.regionService.getForCountry(id));
   }
 
   @Get(':id/locations')
+  @Public()
   @ApiOperation({ summary: 'Get a country locations' })
   @ApiParam({ name: 'id', description: 'Country id', type: 'number' })
   @ApiOkResponse({
@@ -202,15 +169,8 @@ export class CountryController {
     @Param('id', ParseIntPipe) id: number,
     @Res() response: Response,
   ) {
-    try {
-      const locations = await this.locationService.getForCountry(id);
-      if (locations) {
-        response.status(HttpStatus.OK).send(locations);
-      } else {
-        response.status(HttpStatus.NOT_FOUND).send();
-      }
-    } catch (e) {
-      response.status(HttpStatus.INTERNAL_SERVER_ERROR).send(e);
-    }
+    response
+      .status(HttpStatus.OK)
+      .send(await this.locationService.getForCountry(id));
   }
 }

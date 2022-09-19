@@ -51,7 +51,10 @@ export class AuthService {
   async parseUserFromToken(token: string): Promise<any> {
     try {
       const credentials = (await this.jwtService.decode(token)) as any;
-      return await this.userService.findOne(credentials?.user?.email);
+      const { id, name, email, role } = await this.userService.findOne(
+        credentials?.user?.email,
+      );
+      return { id, name, email, role };
     } catch (e) {}
   }
 }

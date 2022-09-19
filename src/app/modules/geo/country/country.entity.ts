@@ -5,6 +5,8 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  BeforeInsert,
+  BeforeUpdate,
 } from 'typeorm';
 import { Region } from '../region/region.entity';
 
@@ -54,4 +56,15 @@ export class Country {
 
   @OneToMany(() => Region, (region) => region.countryId)
   regions: Region[];
+
+  @BeforeInsert()
+  public beforeInsert() {
+    this.createdBy = 1;
+    this.updatedBy = 1;
+  }
+
+  @BeforeUpdate()
+  public beforeUpdate() {
+    this.updatedBy = 2;
+  }
 }

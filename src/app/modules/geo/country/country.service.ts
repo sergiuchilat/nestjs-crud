@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Country } from './country.entity';
@@ -12,58 +12,77 @@ import { Region } from '../region/region.entity';
 export class CountryService {
   constructor(
     @InjectRepository(Country)
-    private countryRepository: Repository<CountryItemDto>,
+    private countryRepository: Repository<Country>,
     @InjectRepository(Region)
     private regionRepository: Repository<Region>,
   ) {}
 
   async getAll(): Promise<CountryItemDto[]> {
-    return plainToInstance(CountryItemDto, await this.countryRepository.find());
+    try {
+      return plainToInstance(
+        CountryItemDto,
+        await this.countryRepository.find(),
+      );
+    } catch (e) {
+      throw new NotFoundException();
+    }
   }
 
   async getOneById(id: number): Promise<CountryItemDto> | undefined {
-    return plainToInstance(
-      CountryItemDto,
-      await this.countryRepository.findOneOrFail({
-        where: {
-          id,
-        },
-      }),
-    );
+    try {
+      return plainToInstance(
+        CountryItemDto,
+        await this.countryRepository.findOneOrFail({
+          where: {
+            id,
+          },
+        }),
+      );
+    } catch (e) {
+      throw new NotFoundException();
+    }
   }
 
   async create(country: CountryCreateDto): Promise<CountryItemDto> | undefined {
-    return this.countryRepository.save(country);
+    return this.countryRepository.save(plainToInstance(Country, country));
   }
 
   async update(
     id: number,
     newValue: CountryCreateDto,
   ): Promise<CountryItemDto> | undefined {
-    await this.countryRepository.update(id, newValue);
+    await this.countryRepository.update(id, plainToInstance(Country, newValue));
     return this.getOneById(id);
   }
 
   async delete(id: number) {
+    const country = await this.getOneById(id);
+    if (!country) {
+      throw new NotFoundException();
+    }
     return await this.countryRepository.delete(id);
   }
 
   async getOneByIdWithRegions(
     id: number,
   ): Promise<CountryWithRegionsDto> | undefined {
-    const country = plainToInstance(
-      CountryWithRegionsDto,
-      await this.countryRepository.findOneOrFail({
+    try {
+      const country = plainToInstance(
+        CountryWithRegionsDto,
+        await this.countryRepository.findOneOrFail({
+          where: {
+            id,
+          },
+        }),
+      );
+      country.regions = await this.regionRepository.find({
         where: {
-          id,
+          countryId: id,
         },
-      }),
-    );
-    country.regions = await this.regionRepository.find({
-      where: {
-        countryId: id,
-      },
-    });
-    return country;
+      });
+      return country;
+    } catch (e) {
+      throw new NotFoundException();
+    }
   }
 }

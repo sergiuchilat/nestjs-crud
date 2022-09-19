@@ -29,6 +29,16 @@ export class Country {
   })
   code: string;
 
+  @Column({
+    nullable: false,
+  })
+  createdBy: number;
+
+  @Column({
+    nullable: false,
+  })
+  updatedBy: number;
+
   @CreateDateColumn({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP(6)',

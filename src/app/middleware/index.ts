@@ -1,8 +1,8 @@
-import { LoggerMiddleware } from './guards/logger.middleware';
+import { AuthGuard } from './guards/auth.guard';
 export default [
   {
-    name: 'logger',
+    name: 'auth',
     routes: '*',
-    guard: LoggerMiddleware,
+    guard: AuthGuard,
   },
 ];

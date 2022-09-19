@@ -23,7 +23,9 @@
     "typeorm:migrate": "npm run typeorm migration:run -- -d ./src/database/config/migration-type-orm.config.ts",
     "typeorm:generate-migration": "npm run typeorm -- -d ./src/database/config/migration-type-orm.config.ts migration:create ./src/database/migrations/$npm_config_name",
     "typeorm:create-migration": "npm run typeorm -- migration:create ./src/database/migrations/$npm_config_name",
-    "typeorm:migrate:undo": "npm run typeorm -- -d ./src/database/config/migration-type-orm.config.ts migration:revert"
+    "typeorm:migrate:undo": "npm run typeorm -- -d ./src/database/config/migration-type-orm.config.ts migration:revert",
+    "seed:config": "ts-node ./node_modules/typeorm-seeding/dist/cli.js config -n ./src/database/config/migration-type-orm.config.ts",
+    "seed:run": "ts-node ./node_modules/typeorm-seeding/dist/cli.js seed -n ./src/database/config/migration-type-orm.config.ts"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",
@@ -46,7 +48,8 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
-    "typeorm": "^0.3.9"
+    "typeorm": "^0.3.9",
+    "typeorm-seeding": "^1.6.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",

@@ -5,6 +5,7 @@ import { UserLoginDto } from './dto/user.login.dto';
 import { UserLoginResponseDto } from './dto/user.login.response.dto';
 import { UserRegisterDto } from './dto/user.register.dto';
 import { UserRegisterResponseDto } from './dto/user.register.response.dto';
+import { Public } from '../../decorators/public.decorator';
 
 @ApiTags('Authentication')
 @Controller('/auth')
@@ -12,6 +13,7 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('login')
+  @Public()
   @ApiOperation({ summary: 'User login' })
   @ApiOkResponse({
     description: 'Bearer token',

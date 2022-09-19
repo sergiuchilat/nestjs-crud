@@ -8,20 +8,26 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Req,
   Res,
-  UseGuards,
 } from '@nestjs/common';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { CountryService } from './country.service';
 import { RegionService } from '../region/region.service';
 import { LocationService } from '../location/location.service';
-import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CountryCreateDto } from './dto/country.create.dto';
 import { CountryItemDto } from './dto/country.item.dto';
 import { LocationItemDto } from '../location/dto/location.item.dto';
 import { RegionItemDto } from '../region/dto/region.item.dto';
-import { ApiParam } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../../../middleware/guards/jwt-auth.guard';
+import { Public } from '../../../decorators/public.decorator';
+import { RolesGuard } from '../../user/roles/roles.decorator';
+import { UserRole } from '../../user/roles/role.enum';
 
 @ApiTags('Countries')
 @Controller('/countries')
@@ -33,6 +39,7 @@ export class CountryController {
   ) {}
 
   @Get()
+  @Public()
   @ApiOperation({ summary: 'GET List of countries' })
   @ApiOkResponse({
     description: 'List of countries',
@@ -48,6 +55,7 @@ export class CountryController {
   }
 
   @Get(':id')
+  @RolesGuard(UserRole.ADMIN)
   @ApiOperation({ summary: 'GET One country by Id' })
   @ApiParam({ name: 'id', description: 'Country id', type: 'number' })
   @ApiOkResponse({
@@ -75,11 +83,12 @@ export class CountryController {
     type: CountryItemDto,
     isArray: true,
   })
-  @UseGuards(JwtAuthGuard)
   async create(
     @Body() createCountryDto: CountryCreateDto,
+    @Req() request: Request,
     @Res() response: Response,
   ) {
+    console.log(request);
     try {
       response
         .status(HttpStatus.OK)
@@ -97,7 +106,6 @@ export class CountryController {
     type: CountryItemDto,
     isArray: true,
   })
-  @UseGuards(JwtAuthGuard)
   async update(
     @Body() updateCountryDto: CountryCreateDto,
     @Param('id', ParseIntPipe) id: number,
@@ -119,7 +127,6 @@ export class CountryController {
     description: 'Empty response',
     type: null,
   })
-  @UseGuards(JwtAuthGuard)
   async delete(
     @Param('id', ParseIntPipe) id: number,
     @Res() response: Response,

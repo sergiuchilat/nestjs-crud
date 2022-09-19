@@ -30,7 +30,13 @@ export class AuthService {
     if (existingUser && validCredentials) {
       return {
         token: this.jwtService.sign({
-          username: user.email,
+          user: {
+            id: existingUser.id,
+            email: existingUser.email,
+            role: existingUser.role,
+            name: existingUser.name,
+          },
+
           sub: existingUser.id,
         }),
       };
@@ -40,5 +46,12 @@ export class AuthService {
 
   async register(user: UserRegisterDto): Promise<UserRegisterResponseDto> {
     return await this.userService.create(user);
+  }
+
+  async parseUserFromToken(token: string): Promise<any> {
+    try {
+      const credentials = (await this.jwtService.decode(token)) as any;
+      return await this.userService.findOne(credentials?.user?.email);
+    } catch (e) {}
   }
 }

@@ -21,7 +21,7 @@ export class RolesGuard implements CanActivate {
     if (!user) {
       throw new UnauthorizedException();
     }
-    return RolesGuard.matchRoles(roles, user.user.role);
+    return RolesGuard.matchRoles(roles, user.props.role);
   }
 
   private static matchRoles(roles: string[], userRole: string): boolean {

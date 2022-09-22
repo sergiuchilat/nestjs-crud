@@ -2,7 +2,6 @@ import {
   Controller,
   Post,
   Body,
-  UseFilters,
   Get,
   Res,
   HttpStatus,
@@ -19,7 +18,6 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { AllExceptionsFilter } from '../../exceptions/all-exceptions';
 import { AdminRegisterDto } from './dto/admin.register.dto';
 import { UserRegisterResponseDto } from '../auth/dto/user.register.response.dto';
 import { UserService } from './user.service';
@@ -35,7 +33,7 @@ import { User } from './user.entity';
 
 @ApiTags('Users')
 @Controller('/users')
-@UseFilters(AllExceptionsFilter)
+//@UseFilters(AllExceptionsFilter)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -53,6 +51,26 @@ export class UserController {
     } catch (e) {
       console.log(e);
     }
+  }
+
+  @Patch('update-own-password')
+  @RolesGuard(UserRole.ADMIN)
+  @ApiOperation({ summary: 'Update own password' })
+  @ApiParam({ name: 'id', description: 'User id', type: 'number' })
+  @ApiOkResponse({
+    description: 'Updated own password',
+    type: UserUpdatePasswordDto,
+    isArray: true,
+  })
+  async updateOwnPassword(
+    @Body() value: UserUpdatePasswordDto,
+    @Req() request: Request,
+    @Res() response: Response,
+  ) {
+    console.log('here');
+    response
+      .status(HttpStatus.OK)
+      .send(await this.userService.updateOwnPassword(value, request.user));
   }
 
   @Get(':id')
@@ -125,10 +143,10 @@ export class UserController {
 
   @Patch(':id/update-password')
   @RolesGuard(UserRole.ADMIN)
-  @ApiOperation({ summary: 'Update user user password' })
+  @ApiOperation({ summary: 'Update user password' })
   @ApiParam({ name: 'id', description: 'User id', type: 'number' })
   @ApiOkResponse({
-    description: 'Updated user',
+    description: 'Updated user password',
     type: UserUpdatePasswordDto,
     isArray: true,
   })

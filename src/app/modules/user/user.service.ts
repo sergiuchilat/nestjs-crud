@@ -66,13 +66,14 @@ export class UserService {
     if (existingUser) {
       throw new ConflictException();
     }
-    user.password = await this.encodePassword(user.password);
 
     return await this.userRepository.save({
-      name: 'John',
+      name: user.name || 'Noname',
       email: user.email,
-      password: user.password,
+      password: await this.encodePassword(user.password),
       role: UserService.detectRole(role),
+      createdBy: 1,
+      updatedBy: 1,
     });
   }
 
@@ -94,12 +95,13 @@ export class UserService {
   ): Promise<User> | undefined {
     if (newValue.new_password !== newValue.new_password_confirmation) {
     }
-    const existingUser = await this.getOneById(user.user.id);
+    const existingUser = await this.getOneById(id);
 
-    const oldPassword = await this.encodePassword(newValue.old_password);
-    const currentPassword = existingUser.password;
-    console.log(await compare(oldPassword, currentPassword));
-    if (!(await compare(oldPassword, currentPassword))) {
+    const passwordMatch = await compare(
+      newValue.old_password,
+      existingUser.password,
+    );
+    if (!passwordMatch) {
       throw new NotFoundException();
     }
 
@@ -107,9 +109,34 @@ export class UserService {
     const entity = plainToInstance(User, {
       password: newPassword,
     });
-    entity.updatedBy = user.user.id;
+    entity.updatedBy = user.props.id;
     await this.userRepository.update(id, entity);
     return this.getOneById(id);
+  }
+
+  async updateOwnPassword(
+    newValue: UserUpdatePasswordDto,
+    user: any,
+  ): Promise<User> | undefined {
+    if (newValue.new_password !== newValue.new_password_confirmation) {
+    }
+    const existingUser = await this.getOneById(user.props.id);
+
+    const passwordMatch = await compare(
+      newValue.old_password,
+      existingUser.password,
+    );
+    if (!passwordMatch) {
+      throw new NotFoundException();
+    }
+
+    const newPassword = await this.encodePassword(newValue.new_password);
+    const entity = plainToInstance(User, {
+      password: newPassword,
+    });
+    entity.updatedBy = user.props.id;
+    await this.userRepository.update(user.props.id, entity);
+    return this.getOneById(user.props.id);
   }
 
   async delete(id: number) {

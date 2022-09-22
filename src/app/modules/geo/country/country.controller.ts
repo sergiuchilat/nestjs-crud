@@ -10,7 +10,6 @@ import {
   Post,
   Req,
   Res,
-  UseFilters,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { CountryService } from './country.service';
@@ -28,11 +27,10 @@ import { LocationItemDto } from '../location/dto/location.item.dto';
 import { RegionItemDto } from '../region/dto/region.item.dto';
 import { RolesGuard } from '../../user/roles/roles.decorator';
 import { UserRole } from '../../user/roles/role.enum';
-import { AllExceptionsFilter } from '../../../exceptions/all-exceptions';
 
 @ApiTags('Countries')
 @Controller('/countries')
-@UseFilters(AllExceptionsFilter)
+// @UseFilters(AllExceptionsFilter)
 export class CountryController {
   constructor(
     private readonly countryService: CountryService,

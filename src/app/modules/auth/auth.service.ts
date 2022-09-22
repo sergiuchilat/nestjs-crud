@@ -30,7 +30,7 @@ export class AuthService {
     if (existingUser && validCredentials) {
       return {
         token: this.jwtService.sign({
-          user: {
+          props: {
             id: existingUser.id,
             email: existingUser.email,
             role: existingUser.role,

@@ -44,6 +44,16 @@ export class CreateTableUsers1663518026768 implements MigrationInterface {
             default: 0,
           },
           {
+            name: 'createdBy',
+            type: 'int',
+            isNullable: false,
+          },
+          {
+            name: 'updatedBy',
+            type: 'int',
+            isNullable: false,
+          },
+          {
             name: 'createdAt',
             type: 'timestamp',
             isNullable: true,

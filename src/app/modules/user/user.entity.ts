@@ -33,12 +33,22 @@ export class User {
     enum: UserRole,
     default: UserRole.USER,
   })
-  role: UserRole.USER;
+  role: UserRole;
 
   @Column({
     default: 0,
   })
   verified: number;
+
+  @Column({
+    nullable: false,
+  })
+  createdBy: number;
+
+  @Column({
+    nullable: false,
+  })
+  updatedBy: number;
 
   @CreateDateColumn({
     type: 'timestamp',

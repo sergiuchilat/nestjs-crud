@@ -26,7 +26,6 @@ import { CountryCreateDto } from './dto/country.create.dto';
 import { CountryItemDto } from './dto/country.item.dto';
 import { LocationItemDto } from '../location/dto/location.item.dto';
 import { RegionItemDto } from '../region/dto/region.item.dto';
-import { Public } from '../../../decorators/public.decorator';
 import { RolesGuard } from '../../user/roles/roles.decorator';
 import { UserRole } from '../../user/roles/role.enum';
 import { AllExceptionsFilter } from '../../../exceptions/all-exceptions';
@@ -42,7 +41,7 @@ export class CountryController {
   ) {}
 
   @Get()
-  @Public()
+  @RolesGuard(UserRole.ADMIN)
   @ApiOperation({ summary: 'Get List of countries' })
   @ApiOkResponse({
     description: 'List of countries',
@@ -54,7 +53,7 @@ export class CountryController {
   }
 
   @Get(':id')
-  @Public()
+  @RolesGuard(UserRole.ADMIN)
   @ApiOperation({ summary: 'Get One country by Id' })
   @ApiParam({ name: 'id', description: 'Country id', type: 'number' })
   @ApiOkResponse({
@@ -72,6 +71,7 @@ export class CountryController {
   }
 
   @Post()
+  @RolesGuard(UserRole.ADMIN)
   @ApiOperation({ summary: 'Create a new country' })
   @ApiOkResponse({
     description: 'Added country',
@@ -126,7 +126,7 @@ export class CountryController {
   }
 
   @Get(':id/with-regions')
-  @Public()
+  @RolesGuard(UserRole.ALL)
   @ApiOperation({ summary: 'Get One country by Id with regions' })
   @ApiParam({ name: 'id', description: 'Country id', type: 'number' })
   @ApiOkResponse({
@@ -144,7 +144,7 @@ export class CountryController {
   }
 
   @Get(':id/regions')
-  @Public()
+  @RolesGuard(UserRole.ALL)
   @ApiOperation({ summary: 'Get a country regions' })
   @ApiParam({ name: 'id', description: 'Country id', type: 'number' })
   @ApiOkResponse({
@@ -163,7 +163,7 @@ export class CountryController {
   }
 
   @Get(':id/locations')
-  @Public()
+  @RolesGuard(UserRole.ALL)
   @ApiOperation({ summary: 'Get a country locations' })
   @ApiParam({ name: 'id', description: 'Country id', type: 'number' })
   @ApiOkResponse({

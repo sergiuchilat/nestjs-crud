@@ -1,8 +1,8 @@
-import { AuthGuard } from './guards/auth.guard';
+import { ParseTokenGuard } from './guards/parse.token.guard';
 export default [
   {
-    name: 'auth',
+    name: 'parse_token',
     routes: '*',
-    guard: AuthGuard,
+    guard: ParseTokenGuard,
   },
 ];

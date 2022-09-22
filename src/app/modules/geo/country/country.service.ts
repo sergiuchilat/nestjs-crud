@@ -11,6 +11,7 @@ import { CountryItemDto } from './dto/country.item.dto';
 import { plainToInstance } from 'class-transformer';
 import { CountryWithRegionsDto } from './dto/country.with-regions.dto';
 import { Region } from '../region/region.entity';
+import { CountryCreateResponseDto } from './dto/country.create.response.dto';
 
 @Injectable()
 export class CountryService {
@@ -50,7 +51,7 @@ export class CountryService {
   async create(
     country: CountryCreateDto,
     user: any,
-  ): Promise<CountryItemDto> | undefined {
+  ): Promise<CountryCreateResponseDto> | undefined {
     const countryEntity = plainToInstance(Country, country);
 
     const existingCountry = await this.countryRepository.findOne({

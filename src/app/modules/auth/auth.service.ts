@@ -18,7 +18,7 @@ export class AuthService {
     let validCredentials = false;
     let existingUser = null;
     try {
-      existingUser = await this.userService.findOne(user.email);
+      existingUser = await this.userService.getOneByEmail(user.email);
       const passwordMatch = await compare(user.password, existingUser.password);
 
       if (existingUser && passwordMatch) {
@@ -44,17 +44,15 @@ export class AuthService {
     throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
   }
 
-  async register(user: UserRegisterDto): Promise<UserRegisterResponseDto> {
-    return await this.userService.create(user);
+  async registerUser(user: UserRegisterDto): Promise<UserRegisterResponseDto> {
+    return await this.userService.createUser(user);
   }
 
   async parseUserFromToken(token: string): Promise<any> {
     try {
-      const credentials = (await this.jwtService.decode(token)) as any;
-      const { id, name, email, role } = await this.userService.findOne(
-        credentials?.user?.email,
-      );
-      return { id, name, email, role };
-    } catch (e) {}
+      return (await this.jwtService.decode(token)) as any;
+    } catch (e) {
+      return {};
+    }
   }
 }

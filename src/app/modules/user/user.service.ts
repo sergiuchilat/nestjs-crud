@@ -2,6 +2,7 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -94,14 +95,13 @@ export class UserService {
     user: any,
   ): Promise<User> | undefined {
     if (newValue.new_password !== newValue.new_password_confirmation) {
+      throw new UnprocessableEntityException(
+        'Password and confirm password do not match',
+      );
     }
     const existingUser = await this.getOneById(id);
 
-    const passwordMatch = await compare(
-      newValue.old_password,
-      existingUser.password,
-    );
-    if (!passwordMatch) {
+    if (!(await compare(newValue.old_password, existingUser.password))) {
       throw new NotFoundException();
     }
 
@@ -119,14 +119,25 @@ export class UserService {
     user: any,
   ): Promise<User> | undefined {
     if (newValue.new_password !== newValue.new_password_confirmation) {
+      throw new UnprocessableEntityException(
+        'Password and confirm password do not match',
+      );
     }
     const existingUser = await this.getOneById(user.props.id);
 
-    const passwordMatch = await compare(
-      newValue.old_password,
-      existingUser.password,
-    );
-    if (!passwordMatch) {
+    if (newValue.new_password !== newValue.new_password_confirmation) {
+      throw new UnprocessableEntityException(
+        'Password and confirm password do not match',
+      );
+    }
+
+    if (await compare(newValue.new_password, existingUser.password)) {
+      throw new UnprocessableEntityException(
+        "You can't use one of old password. Please select a new password",
+      );
+    }
+
+    if (!(await compare(newValue.old_password, existingUser.password))) {
       throw new NotFoundException();
     }
 

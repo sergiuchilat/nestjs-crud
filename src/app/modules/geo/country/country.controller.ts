@@ -29,8 +29,9 @@ import { LocationItemDto } from '../location/dto/location.item.dto';
 import { RegionItemDto } from '../region/dto/region.item.dto';
 import { RolesGuard } from '../../user/roles/roles.decorator';
 import { UserRole } from '../../user/roles/role.enum';
-import { IPaginationOptions } from 'nestjs-typeorm-paginate';
 import ConfigPagination from '../../../../config/config.pagination';
+import { SortOrder } from '../../../validators/typeorm.sort.validator';
+import { ColumnSortCountry } from './validators/column.sort.validator';
 
 @ApiTags('Countries')
 @Controller('/countries')
@@ -47,6 +48,12 @@ export class CountryController {
   @ApiOperation({ summary: 'Get list of countries' })
   @ApiParam({ name: 'page', description: 'Page number', type: 'number' })
   @ApiParam({ name: 'limit', description: 'Page size', type: 'number' })
+  @ApiParam({ name: 'sort_order', description: 'Sort order', enum: SortOrder })
+  @ApiParam({
+    name: 'sort_by',
+    description: 'Sort column',
+    enum: ColumnSortCountry,
+  })
   @ApiOkResponse({
     description: 'List of countries',
     type: CountryItemDto,
@@ -57,15 +64,22 @@ export class CountryController {
     page: number,
     @Query('limit', new DefaultValuePipe(ConfigPagination.limit), ParseIntPipe)
     limit: number,
+    @Query('sort_order', new DefaultValuePipe(SortOrder.DESC))
+    sort_order: SortOrder,
+    @Query('sort_by', new DefaultValuePipe(ColumnSortCountry.id))
+    sort_by: ColumnSortCountry,
     @Res() response: Response,
   ) {
-    const options: IPaginationOptions = {
-      page,
-      limit,
-    };
-    response
-      .status(HttpStatus.OK)
-      .json(await this.countryService.getAllPaginated(options));
+    response.status(HttpStatus.OK).json(
+      await this.countryService.getAllPaginated(
+        {
+          page,
+          limit,
+        },
+        sort_order,
+        sort_by,
+      ),
+    );
   }
 
   @Get('dropdown')

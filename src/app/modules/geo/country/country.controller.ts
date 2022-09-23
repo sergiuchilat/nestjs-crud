@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Delete,
   Get,
   HttpStatus,
@@ -8,6 +9,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   Req,
   Res,
 } from '@nestjs/common';
@@ -27,6 +29,8 @@ import { LocationItemDto } from '../location/dto/location.item.dto';
 import { RegionItemDto } from '../region/dto/region.item.dto';
 import { RolesGuard } from '../../user/roles/roles.decorator';
 import { UserRole } from '../../user/roles/role.enum';
+import { IPaginationOptions } from 'nestjs-typeorm-paginate';
+import ConfigPagination from '../../../../config/config.pagination';
 
 @ApiTags('Countries')
 @Controller('/countries')
@@ -38,16 +42,46 @@ export class CountryController {
     private readonly locationService: LocationService,
   ) {}
 
-  @Get()
+  @Get('')
   @RolesGuard(UserRole.ADMIN)
-  @ApiOperation({ summary: 'Get List of countries' })
+  @ApiOperation({ summary: 'Get list of countries' })
+  @ApiParam({ name: 'page', description: 'Page number', type: 'number' })
+  @ApiParam({ name: 'limit', description: 'Page size', type: 'number' })
   @ApiOkResponse({
     description: 'List of countries',
     type: CountryItemDto,
     isArray: true,
   })
-  async getAll(@Res() response: Response) {
-    response.status(HttpStatus.OK).json(await this.countryService.getAll());
+  async getAllPaginated(
+    @Query('page', new DefaultValuePipe(ConfigPagination.page), ParseIntPipe)
+    page: number,
+    @Query('limit', new DefaultValuePipe(ConfigPagination.limit), ParseIntPipe)
+    limit: number,
+    @Res() response: Response,
+  ) {
+    const options: IPaginationOptions = {
+      page,
+      limit,
+    };
+    response
+      .status(HttpStatus.OK)
+      .json(await this.countryService.getAllPaginated(options));
+  }
+
+  @Get('dropdown')
+  @RolesGuard(UserRole.ADMIN)
+  @ApiOperation({ summary: 'Get list of countries' })
+  @ApiParam({ name: 'page', description: 'Page number', type: 'number' })
+  @ApiParam({ name: 'limit', description: 'Page size', type: 'number' })
+  @ApiOkResponse({
+    description: 'List of countries',
+    type: CountryItemDto,
+    isArray: true,
+  })
+  async getAllForDropdown(@Res() response: Response) {
+    response
+      .status(HttpStatus.OK)
+      .json(await this.countryService.getAllForDropdown());
   }
 
   @Get(':id')

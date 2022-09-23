@@ -12,6 +12,12 @@ import { plainToInstance } from 'class-transformer';
 import { CountryWithRegionsDto } from './dto/country.with-regions.dto';
 import { Region } from '../region/region.entity';
 import { CountryCreateResponseDto } from './dto/country.create.response.dto';
+import {
+  IPaginationOptions,
+  paginate,
+  Pagination,
+} from 'nestjs-typeorm-paginate';
+import { CountryItemDropdownDto } from './dto/country.item.dropdown.dto';
 
 @Injectable()
 export class CountryService {
@@ -22,12 +28,22 @@ export class CountryService {
     private regionRepository: Repository<Region>,
   ) {}
 
-  async getAll(): Promise<CountryItemDto[]> {
+  async getAllForDropdown(): Promise<CountryItemDropdownDto[]> {
     try {
       return plainToInstance(
-        CountryItemDto,
+        CountryItemDropdownDto,
         await this.countryRepository.find(),
       );
+    } catch (e) {
+      throw new NotFoundException();
+    }
+  }
+
+  async getAllPaginated(
+    options: IPaginationOptions,
+  ): Promise<Pagination<Country>> {
+    try {
+      return paginate<Country>(this.countryRepository, options);
     } catch (e) {
       throw new NotFoundException();
     }

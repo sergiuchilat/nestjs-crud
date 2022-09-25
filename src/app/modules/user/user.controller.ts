@@ -12,6 +12,7 @@ import {
   Delete,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
@@ -34,6 +35,7 @@ import { User } from './user.entity';
 @ApiTags('Users')
 @Controller('/users')
 //@UseFilters(AllExceptionsFilter)
+@ApiBearerAuth('jwt')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 

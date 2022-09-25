@@ -18,9 +18,11 @@ import { CountryService } from './country.service';
 import { RegionService } from '../region/region.service';
 import { LocationService } from '../location/location.service';
 import {
+  ApiBearerAuth,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import { CountryCreateDto } from './dto/country.create.dto';
@@ -35,6 +37,7 @@ import { CountrySort } from './validators/country.sort.validator';
 
 @ApiTags('Countries')
 @Controller('/countries')
+@ApiBearerAuth('jwt')
 // @UseFilters(AllExceptionsFilter)
 export class CountryController {
   constructor(
@@ -46,13 +49,41 @@ export class CountryController {
   @Get('')
   @RolesGuard(UserRole.ADMIN)
   @ApiOperation({ summary: 'Get list of countries' })
-  @ApiParam({ name: 'page', description: 'Page number', type: 'number' })
-  @ApiParam({ name: 'limit', description: 'Page size', type: 'number' })
-  @ApiParam({ name: 'sort_order', description: 'Sort order', enum: SortOrder })
-  @ApiParam({
+  @ApiQuery({
+    name: 'page',
+    description: 'Page number',
+    type: 'number',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'limit',
+    description: 'Page size',
+    type: 'number',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'sort_order',
+    description: 'Sort order',
+    enum: SortOrder,
+    required: false,
+  })
+  @ApiQuery({
     name: 'sort_by',
     description: 'Sort column',
     enum: CountrySort,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'filter[name]',
+    description: 'Filter by name',
+    type: 'string',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'filter[code]',
+    description: 'Filter by code',
+    type: 'string',
+    required: false,
   })
   @ApiOkResponse({
     description: 'List of countries',
@@ -68,6 +99,7 @@ export class CountryController {
     sort_order: SortOrder,
     @Query('sort_by', new DefaultValuePipe(CountrySort.id))
     sort_by: CountrySort,
+    @Req() request: Request,
     @Res() response: Response,
   ) {
     response.status(HttpStatus.OK).json(
@@ -78,6 +110,7 @@ export class CountryController {
         },
         sort_order,
         sort_by,
+        request.query.filter,
       ),
     );
   }

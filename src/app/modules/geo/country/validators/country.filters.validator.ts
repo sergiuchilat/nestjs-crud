@@ -1,4 +1,4 @@
-export enum CountrySearch {
+export enum CountryFilters {
   id = 'id',
   name = 'name',
 }

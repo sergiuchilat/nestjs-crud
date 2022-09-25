@@ -12,6 +12,7 @@ const ConfigEnv = {
   DB_PASSWORD: configService.get('DB_PASSWORD'),
   DB_NAME: configService.get('DB_NAME'),
   DB_DRIVER: configService.get('DB_DRIVER'),
+  JWT_BEARER_AUTH_NAME: configService.get('JWT_BEARER_AUTH_NAME'),
   JWT_TOKEN_EXPIRES_IN: configService.get('JWT_TOKEN_EXPIRES_IN'),
   JWT_SECRET_KEY: configService.get('JWT_SECRET_KEY'),
   DOCS_GENERATE: configService.get('DOCS_GENERATE'),

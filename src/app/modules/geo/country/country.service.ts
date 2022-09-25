@@ -20,6 +20,7 @@ import {
 import { CountryItemDropdownDto } from './dto/country.item.dropdown.dto';
 import { SortOrder } from '../../../validators/typeorm.sort.validator';
 import { CountrySort } from './validators/country.sort.validator';
+import CountryFiltersBuilder from './builders/country.filters.builder';
 
 @Injectable()
 export class CountryService {
@@ -45,10 +46,13 @@ export class CountryService {
     options: IPaginationOptions,
     sort_order: SortOrder,
     sort_by: CountrySort,
+    filters: any,
   ): Promise<Pagination<Country>> {
+    const filtersBuilder = new CountryFiltersBuilder(filters);
     try {
       const queryBuilder = this.countryRepository
         .createQueryBuilder('countries')
+        .where(filtersBuilder.get())
         .orderBy(sort_by, sort_order);
       return paginate<Country>(queryBuilder, options);
     } catch (e) {
@@ -84,8 +88,9 @@ export class CountryService {
     if (existingCountry) {
       throw new ConflictException();
     }
-    countryEntity.createdBy = user.id;
-    countryEntity.updatedBy = user.id;
+    console.log(user);
+    countryEntity.createdBy = user.props.id;
+    countryEntity.updatedBy = user.props.id;
     return await this.countryRepository.save(countryEntity);
   }
 

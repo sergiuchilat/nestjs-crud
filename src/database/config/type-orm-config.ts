@@ -15,6 +15,7 @@ export default TypeOrmModule.forRoot({
   username: ConfigEnv.DB_USER,
   password: ConfigEnv.DB_PASSWORD,
   database: ConfigEnv.DB_NAME,
+  logging: true,
   autoLoadEntities: true,
   synchronize: Number(ConfigEnv.APP_DEV_MODE) === 1,
 });

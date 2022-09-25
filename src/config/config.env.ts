@@ -20,5 +20,9 @@ const ConfigEnv = {
   DOCS_VERSION: configService.get('DOCS_VERSION'),
   DOCS_TITLE: configService.get('DOCS_TITLE'),
   DOCS_DESCRIPTION: configService.get('DOCS_DESCRIPTION'),
+  APP_DEFAULT_TIMEOUT: configService.getWithType(
+    'APP_DEFAULT_TIMEOUT',
+    'number',
+  ),
 };
 export default ConfigEnv;

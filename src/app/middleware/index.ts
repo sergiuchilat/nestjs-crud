@@ -1,8 +1,8 @@
-import { ParseTokenGuard } from './guards/parse.token.guard';
+import { ParseToken } from './middleware/parse.token';
 export default [
   {
     name: 'parse_token',
     routes: '*',
-    guard: ParseTokenGuard,
+    guard: ParseToken,
   },
 ];

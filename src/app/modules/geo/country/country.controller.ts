@@ -12,6 +12,7 @@ import {
   Query,
   Req,
   Res,
+  UseInterceptors,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { CountryService } from './country.service';
@@ -34,6 +35,7 @@ import { UserRole } from '../../user/roles/role.enum';
 import ConfigPagination from '../../../../config/config.pagination';
 import { SortOrder } from '../../../validators/typeorm.sort.validator';
 import { CountrySort } from './validators/country.sort.validator';
+import { TimeoutInterceptor } from '../../../interceptors/timeout.interceptor';
 
 @ApiTags('Countries')
 @Controller('/countries')
@@ -85,11 +87,16 @@ export class CountryController {
     type: 'string',
     required: false,
   })
+  @ApiQuery({
+    name: 'filters',
+    type: () => [CountryItemDto],
+  })
   @ApiOkResponse({
     description: 'List of countries',
     type: CountryItemDto,
     isArray: true,
   })
+  @UseInterceptors(TimeoutInterceptor)
   async getAllPaginated(
     @Query('page', new DefaultValuePipe(ConfigPagination.page), ParseIntPipe)
     page: number,

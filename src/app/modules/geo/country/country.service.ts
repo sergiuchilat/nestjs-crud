@@ -19,7 +19,7 @@ import {
 } from 'nestjs-typeorm-paginate';
 import { CountryItemDropdownDto } from './dto/country.item.dropdown.dto';
 import { SortOrder } from '../../../validators/typeorm.sort.validator';
-import { ColumnSortCountry } from './validators/column.sort.validator';
+import { CountrySort } from './validators/country.sort.validator';
 
 @Injectable()
 export class CountryService {
@@ -44,7 +44,7 @@ export class CountryService {
   async getAllPaginated(
     options: IPaginationOptions,
     sort_order: SortOrder,
-    sort_by: ColumnSortCountry,
+    sort_by: CountrySort,
   ): Promise<Pagination<Country>> {
     try {
       const queryBuilder = this.countryRepository

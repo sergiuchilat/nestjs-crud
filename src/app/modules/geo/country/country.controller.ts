@@ -31,7 +31,7 @@ import { RolesGuard } from '../../user/roles/roles.decorator';
 import { UserRole } from '../../user/roles/role.enum';
 import ConfigPagination from '../../../../config/config.pagination';
 import { SortOrder } from '../../../validators/typeorm.sort.validator';
-import { ColumnSortCountry } from './validators/column.sort.validator';
+import { CountrySort } from './validators/country.sort.validator';
 
 @ApiTags('Countries')
 @Controller('/countries')
@@ -52,7 +52,7 @@ export class CountryController {
   @ApiParam({
     name: 'sort_by',
     description: 'Sort column',
-    enum: ColumnSortCountry,
+    enum: CountrySort,
   })
   @ApiOkResponse({
     description: 'List of countries',
@@ -66,8 +66,8 @@ export class CountryController {
     limit: number,
     @Query('sort_order', new DefaultValuePipe(SortOrder.DESC))
     sort_order: SortOrder,
-    @Query('sort_by', new DefaultValuePipe(ColumnSortCountry.id))
-    sort_by: ColumnSortCountry,
+    @Query('sort_by', new DefaultValuePipe(CountrySort.id))
+    sort_by: CountrySort,
     @Res() response: Response,
   ) {
     response.status(HttpStatus.OK).json(

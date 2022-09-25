@@ -1,6 +1,6 @@
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 
-import TypeOrmModuleInit from '../database/config/type-orm-config';
+import TypeOrmModuleInit from '../database/config/app.config';
 import AppModules from './modules';
 import Middlewares from './middleware';
 

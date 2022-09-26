@@ -10,6 +10,7 @@ export class CreateTableUsers1663518026768 implements MigrationInterface {
             name: 'id',
             type: 'int',
             isPrimary: true,
+            isGenerated: true,
             generationStrategy: 'increment',
             isNullable: false,
           },

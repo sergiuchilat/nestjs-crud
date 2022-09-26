@@ -60,6 +60,25 @@ export class CountryService {
     }
   }
 
+  async getAllWithDeleted(
+    options: IPaginationOptions,
+    sort_order: SortOrder,
+    sort_by: CountrySort,
+    filters: any,
+  ): Promise<Pagination<Country>> {
+    const filtersBuilder = new CountryFiltersBuilder(filters);
+    try {
+      const queryBuilder = this.countryRepository
+        .createQueryBuilder('countries')
+        .withDeleted()
+        .where(filtersBuilder.get())
+        .orderBy(sort_by, sort_order);
+      return paginate<Country>(queryBuilder, options);
+    } catch (e) {
+      throw new NotFoundException();
+    }
+  }
+
   async getOneById(id: number): Promise<CountryItemDto> | undefined {
     try {
       return plainToInstance(
@@ -88,7 +107,6 @@ export class CountryService {
     if (existingCountry) {
       throw new ConflictException();
     }
-    console.log(user);
     countryEntity.createdBy = user.props.id;
     countryEntity.updatedBy = user.props.id;
     return await this.countryRepository.save(countryEntity);
@@ -100,9 +118,20 @@ export class CountryService {
     user: any,
   ): Promise<CountryItemDto> | undefined {
     const countryEntity = plainToInstance(Country, newValue);
-    countryEntity.updatedBy = user.id;
+    countryEntity.updatedBy = user.props.id;
     await this.countryRepository.update(id, countryEntity);
     return this.getOneById(id);
+  }
+
+  async deleteSoft(id: number, user: any) {
+    const country = await this.getOneById(id);
+    if (!country) {
+      throw new NotFoundException();
+    }
+    await this.countryRepository.update(id, {
+      deletedBy: user.props.id,
+    });
+    return await this.countryRepository.softDelete(id);
   }
 
   async delete(id: number) {

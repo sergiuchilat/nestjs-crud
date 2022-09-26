@@ -20,9 +20,9 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typeorm": "ts-node ./node_modules/typeorm/cli",
-    "typeorm:migrate": "npm run typeorm migration:run -- -d ./src/database/config/migration.config.ts",
     "typeorm:generate-migration": "npm run typeorm -- -d ./src/database/config/migration.config.ts migration:create ./src/database/migrations/$npm_config_name",
     "typeorm:create-migration": "npm run typeorm -- migration:create ./src/database/migrations/$npm_config_name",
+    "typeorm:migrate": "npm run typeorm migration:run -- -d ./src/database/config/migration.config.ts",
     "typeorm:migrate:undo": "npm run typeorm -- -d ./src/database/config/migration.config.ts migration:revert",
     "seed:config": "ts-node ./node_modules/typeorm-seeding/dist/cli.js config -n ./src/database/config/migration.config.ts",
     "seed:run": "ts-node ./node_modules/typeorm-seeding/dist/cli.js seed -n ./src/database/config/migration.config.ts"

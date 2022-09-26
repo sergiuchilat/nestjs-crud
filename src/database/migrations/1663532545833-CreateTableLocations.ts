@@ -15,6 +15,7 @@ export class CreateTableLocations1663532545833 implements MigrationInterface {
             name: 'id',
             type: 'int',
             isPrimary: true,
+            isGenerated: true,
             generationStrategy: 'increment',
             isNullable: false,
           },

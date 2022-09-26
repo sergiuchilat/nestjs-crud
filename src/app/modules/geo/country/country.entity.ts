@@ -7,6 +7,8 @@ import {
   OneToMany,
   BeforeInsert,
   BeforeUpdate,
+  DeleteDateColumn,
+  BeforeSoftRemove,
 } from 'typeorm';
 import { Region } from '../region/region.entity';
 
@@ -54,6 +56,19 @@ export class Country {
   })
   public updatedAt: Date;
 
+  @DeleteDateColumn({
+    type: 'timestamp',
+    nullable: true,
+    default: null,
+  })
+  public deletedAt: Date;
+
+  @Column({
+    nullable: true,
+    default: null,
+  })
+  deletedBy: number;
+
   @OneToMany(() => Region, (region) => region.countryId)
   regions: Region[];
 
@@ -66,5 +81,10 @@ export class Country {
   @BeforeUpdate()
   public beforeUpdate() {
     // this.updatedBy = 2;
+  }
+
+  @BeforeSoftRemove()
+  public beforeSoftRemove() {
+    //this.deletedBy = 1;
   }
 }

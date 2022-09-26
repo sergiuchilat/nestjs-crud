@@ -118,6 +118,76 @@ export class CountryController {
     );
   }
 
+  @Get('with-deleted')
+  @RolesGuard(UserRole.ADMIN)
+  @ApiOperation({ summary: 'Get list of countries' })
+  @ApiQuery({
+    name: 'page',
+    description: 'Page number',
+    type: 'number',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'limit',
+    description: 'Page size',
+    type: 'number',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'sort_order',
+    description: 'Sort order',
+    enum: SortOrder,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'sort_by',
+    description: 'Sort column',
+    enum: CountrySort,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'filter[name]',
+    description: 'Filter by name',
+    type: 'string',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'filter[code]',
+    description: 'Filter by code',
+    type: 'string',
+    required: false,
+  })
+  @ApiOkResponse({
+    description: 'List of countries',
+    type: CountryItemDto,
+    isArray: true,
+  })
+  @UseInterceptors(TimeoutInterceptor)
+  async getAllWithDeleted(
+    @Query('page', new DefaultValuePipe(ConfigPagination.page), ParseIntPipe)
+    page: number,
+    @Query('limit', new DefaultValuePipe(ConfigPagination.limit), ParseIntPipe)
+    limit: number,
+    @Query('sort_order', new DefaultValuePipe(SortOrder.DESC))
+    sort_order: SortOrder,
+    @Query('sort_by', new DefaultValuePipe(CountrySort.id))
+    sort_by: CountrySort,
+    @Req() request: Request,
+    @Res() response: Response,
+  ) {
+    response.status(HttpStatus.OK).json(
+      await this.countryService.getAllWithDeleted(
+        {
+          page,
+          limit,
+        },
+        sort_order,
+        sort_by,
+        request.query.filter,
+      ),
+    );
+  }
+
   @Get('dropdown')
   @RolesGuard(UserRole.ADMIN)
   @ApiOperation({ summary: 'Get list of countries' })
@@ -194,13 +264,31 @@ export class CountryController {
 
   @Delete(':id')
   @RolesGuard(UserRole.ADMIN)
-  @ApiOperation({ summary: 'Delete a country by Id' })
+  @ApiOperation({ summary: 'Soft Delete a country by Id' })
   @ApiParam({ name: 'id', description: 'Country id', type: 'number' })
   @ApiOkResponse({
     description: 'Empty response',
     type: null,
   })
   async delete(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() request: Request,
+    @Res() response: Response,
+  ) {
+    response
+      .status(HttpStatus.OK)
+      .send(await this.countryService.deleteSoft(id, request.user));
+  }
+
+  @Delete(':id/destroy')
+  @RolesGuard(UserRole.ADMIN)
+  @ApiOperation({ summary: 'Delete(complete) a country by Id' })
+  @ApiParam({ name: 'id', description: 'Country id', type: 'number' })
+  @ApiOkResponse({
+    description: 'Empty response',
+    type: null,
+  })
+  async destroy(
     @Param('id', ParseIntPipe) id: number,
     @Res() response: Response,
   ) {

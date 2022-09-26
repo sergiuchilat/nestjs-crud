@@ -15,6 +15,7 @@ export class CreateTableCountries1663532533556 implements MigrationInterface {
             name: 'id',
             type: 'int',
             isPrimary: true,
+            isGenerated: true,
             generationStrategy: 'increment',
             isNullable: false,
           },

@@ -31,11 +31,12 @@ import { UserUpdateDto } from './dto/user.update.dto';
 import { UserUpdatePasswordDto } from './dto/user.update.password.dto';
 import { plainToInstance } from 'class-transformer';
 import { User } from './user.entity';
+import ConfigEnv from '../../../config/config.env';
 
 @ApiTags('Users')
 @Controller('/users')
 //@UseFilters(AllExceptionsFilter)
-@ApiBearerAuth('jwt')
+@ApiBearerAuth(ConfigEnv.JWT_BEARER_AUTH_NAME)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 

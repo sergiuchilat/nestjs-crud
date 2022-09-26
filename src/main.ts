@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app/app.module';
 import buildApiDocs from './docs/swagger.builder';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
 import ConfigEnv from './config/config.env';
 
 async function bootstrap() {
@@ -13,6 +13,9 @@ async function bootstrap() {
   }
 
   app.useGlobalPipes(new ValidationPipe());
+  app.enableVersioning({
+    type: VersioningType.URI,
+  });
   await app.listen(ConfigEnv.API_SERVER_PORT);
 }
 bootstrap();

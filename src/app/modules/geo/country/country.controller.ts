@@ -87,10 +87,6 @@ export class CountryController {
     type: 'string',
     required: false,
   })
-  @ApiQuery({
-    name: 'filters',
-    type: () => [CountryItemDto],
-  })
   @ApiOkResponse({
     description: 'List of countries',
     type: CountryItemDto,

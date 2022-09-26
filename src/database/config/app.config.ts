@@ -18,4 +18,5 @@ export default TypeOrmModule.forRoot({
   logging: true,
   autoLoadEntities: true,
   synchronize: Number(ConfigEnv.APP_DEV_MODE) === 1,
+  cache: true,
 });

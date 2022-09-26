@@ -135,10 +135,18 @@ export class CountryService {
   }
 
   async delete(id: number) {
+    await this.countryRepository.update(id, {
+      deletedBy: null,
+      deletedAt: null,
+    });
     const country = await this.getOneById(id);
     if (!country) {
       throw new NotFoundException();
     }
+    await this.countryRepository.update(id, {
+      deletedBy: null,
+      deletedAt: null,
+    });
     return await this.countryRepository.delete(id);
   }
 

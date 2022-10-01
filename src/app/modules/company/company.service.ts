@@ -17,7 +17,7 @@ export class CompanyService {
   }
 
   async getOne(id: number): Promise<CompanyEntity> {
-    return this.companyRepository.findOneOrFail({
+    return await this.companyRepository.findOneOrFail({
       where: {
         id,
       },
